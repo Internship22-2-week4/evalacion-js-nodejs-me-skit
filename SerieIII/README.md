@@ -1,5 +1,9 @@
 # Unsplash API
 
+## Diagrama de Clases
+
+![screenshot](../assets/UML.png)
+
 ## Historias de Usuario
 
 ### 1. Registro con un correo electronico
