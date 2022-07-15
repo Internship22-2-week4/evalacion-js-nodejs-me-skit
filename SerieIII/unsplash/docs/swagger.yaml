@@ -1,0 +1,497 @@
+openapi: 3.0.0
+info: 
+  title: SpotPlay
+  description: 'API platform to show music info...'
+  contact:
+    email: support@spotplay.com
+  license: 
+    name: Apache 2.0
+    url: http://apac...
+  version: 1.0.0
+servers:
+- url: http://localhost:3000/api/v1
+tags:
+- name: Auth
+  description: Authentication methods
+- name: Album
+  description: Create, edit, and update albums info
+- name: Label
+  description: Create, edit, and update labels info
+- name: Photo
+  description: Create, edit, and update photo info
+- name: User
+  description: Create, edit, and update users info
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: JSON authorization header using a token
+      scheme: bearer
+      bearerFormat: JWT 
+  schemas:
+    Auth:
+      type: object
+      properties:
+        email:
+          type: string
+          required: true
+        password:
+          type: string
+          required: true
+    Album:
+      type: object
+      properties:
+        name:
+          type: string
+          required: true
+        userId:
+          type: string
+          required: true
+    Label:
+      type: object
+      properties:
+        name:
+          type: string
+          required: true
+    Photo:
+      type: object
+      properties:
+        title:
+          type: string
+          required: true
+        description:
+          type: string
+        date:
+          type: string
+        uri:
+          type: string
+          required: true
+        userId:
+          type: string
+          required: true
+    User:
+      type: object
+      properties:
+        username:
+          type: string
+          required: true
+        email:
+          type: string
+          required: true
+        password:
+          type: string
+          required: true
+        role:
+          type: string
+          required: true
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/signin:
+    post:
+      tags:
+      - Auth
+      summary: Login action
+      description: Users must provide username and password to get a token and perform actions
+      requestBody:
+        description: Username and password
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Auth'
+        required: true
+      responses:
+        200:
+          description: "Ok: Users info and a token returned"
+        400:
+          description: "Bad request: User or password invalid"
+
+  /user:
+    get:
+      tags:
+      - User
+      summary: Get all users
+      description: Get al users registered into the app
+      responses:
+        200:
+          description: "Ok: Users info returned"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+  /user/signup:
+    post:
+      tags:
+      - User
+      summary: Create a new user
+      operationId: createUser
+      description: Method to create a new user that will be able to use the app
+      requestBody:
+        description: Send user data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        201:
+          description: "Created: Resurce was created successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+  /user/{id}:
+    get:
+      tags:
+      - User
+      summary: Get specific user by ID
+      description: Get a user by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the user to return
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: User info returned"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    delete:
+      tags:
+      - User
+      summary: Delete specific user by ID
+      description: Delete a user by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the user to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: User was deleted"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    put:
+      tags:
+      - User
+      summary: Update specific user by ID
+      description: Update a user by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the user to delete
+        required: true
+        type: string
+      requestBody:
+        description: Send new user data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true        
+      responses:
+        200:
+          description: "Ok: User was updated successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+
+  /album:
+    get:
+      tags:
+      - Album
+      summary: Get all albums
+      description: Get al albums registered into the app.
+      responses:
+        200:
+          description: "Ok: Album info returned"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+        404:
+          description: "Not found: Resource required not found"
+    post:
+      tags:
+      - Album
+      summary: Create a new album
+      operationId: createAlbum
+      description: Method to create a new album
+      requestBody:
+        description: Send album data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Album'
+        required: true
+      responses:
+        201:
+          description: "Created: Resurce was created successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+  /album/{id}:
+    get:
+      tags:
+      - Album
+      summary: Get specific album by ID
+      description: Get a album by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the album to return
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Album info returned"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    delete:
+      tags:
+      - Album
+      summary: Delete specific album by ID
+      description: Delete a album by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the album to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Album was deleted"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    put:
+      tags:
+      - Album
+      summary: Update specific album by ID
+      description: Update a album by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the album to delete
+        required: true
+        type: string
+      requestBody:
+        description: Send new album data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Album'
+        required: true        
+      responses:
+        200:
+          description: "Ok: Album was updated successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+
+  /label:
+    get:
+      tags:
+      - Label
+      summary: Get all labels
+      description: Get al labels registered into the app.
+      responses:
+        200:
+          description: "Ok: Labels info returned"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+        404:
+          description: "Not found: Resource required not found"
+    post:
+      tags:
+      - Label
+      summary: Create a new label
+      operationId: createLabel
+      description: Method to create a new label
+      requestBody:
+        description: Send label data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Label'
+        required: true
+      responses:
+        201:
+          description: "Created: Resurce was created successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+  /label/{id}:
+    get:
+      tags:
+      - Label
+      summary: Get specific label by ID
+      description: Get a label by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the label to return
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Label info returned"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    delete:
+      tags:
+      - Label
+      summary: Delete specific label by ID
+      description: Delete a label by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the label to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Label was deleted"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    put:
+      tags:
+      - Label
+      summary: Update specific label by ID
+      description: Update a label by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the label to delete
+        required: true
+        type: string
+      requestBody:
+        description: Send new label data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Label'
+        required: true        
+      responses:
+        200:
+          description: "Ok: Label was updated successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+
+  /photo:
+    get:
+      tags:
+      - Photo
+      summary: Get all photos
+      description: Get al photos registered into the app.
+      responses:
+        200:
+          description: "Ok: Photos info returned"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    post:
+      tags:
+      - Photo
+      summary: Create a new photo
+      operationId: createPhoto
+      description: Method to create a new photo
+      requestBody:
+        description: Send photo data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Photo'
+        required: true
+      responses:
+        201:
+          description: "Created: Resurce was created successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+  /photo/{id}:
+    get:
+      tags:
+      - Photo
+      summary: Get specific photo by ID
+      description: Get a photo by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the photo to return
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Photo info returned"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    delete:
+      tags:
+      - Photo
+      summary: Delete specific photo by ID
+      description: Delete a photo by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the photo to delete
+        required: true
+        type: string
+      responses:
+        200:
+          description: "Ok: Photo was deleted"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
+    put:
+      tags:
+      - Photo
+      summary: Update specific photo by ID
+      description: Update a photo by ID
+      parameters:
+      - name: id
+        in: path
+        description: ID for the photo to delete
+        required: true
+        type: string
+      requestBody:
+        description: Send new photo data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Photo'
+        required: true        
+      responses:
+        200:
+          description: "Ok: Photo was updated successfully"
+        400:
+          description: "Bad request: Bad format or parameter missing"
+        404:
+          description: "Not found: Resource required not found"
+        401:
+          description: "Unauthorized: Not enough authorization to perform the action"
